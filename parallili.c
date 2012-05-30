@@ -47,9 +47,11 @@ void init() {
 				therm[i].data[j][n] = 22;
 				entasi[i].data[j][n] = 0;
 				
-				file = fopen("map.000","a+"); 
-				fprintf(file,"%d", katastasi[i].data[j][n]);
-				fclose(file); 
+				if (i == 0) {
+					file = fopen("map.000","a+"); 
+					fprintf(file,"%d", katastasi[i].data[j][n]);
+					fclose(file);
+				} 
 			}
 		}	
 	}
