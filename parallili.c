@@ -4,7 +4,6 @@
 #include <math.h>
 #include <string.h>
 
-
 #define HOURS 24
 #define ROWS 8
 #define COLUMNS 8
