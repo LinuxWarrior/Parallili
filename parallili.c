@@ -7,6 +7,10 @@
 #define HOURS 24
 #define ROWS 8
 #define COLUMNS 8
+#define MAX_X 7
+#define MAX_Y 7
+#define MIN_X 7
+#define MIN_Y 7
 
 struct K
 {
@@ -71,6 +75,16 @@ int main(int argc, char *argv[]) {
 	int i, j, n;
 	FILE *file; 
 	
+	int startPosX;
+    int startPosY;
+    int endPosX;
+    int endPosY;
+	int rowNum;
+	int colNum;
+	
+	int sum = 0;
+	int count = 0;
+	
 	const char *name = "map.0";
 	char buf[24] = { 0 };
 	
@@ -83,7 +97,32 @@ int main(int argc, char *argv[]) {
 				katastasi[i].data[j][n] =  abs((int) (katastasi[i-1].data[j][n] + sin(7*i) * 3) % 6);
 				therm[i].data[j][n] =  (22 + (sin(6.5 * i ) * 10) - (katastasi[i-1].data[j][n] / 4)) + (therm[i-1].data[j][n]/50);
 				entasi[i].data[j][n] =  (entasi[i-1].data[j][n]/4) + (sin(7 * i) * 3);
-			
+	
+			}
+		}
+	}
+	
+	for (i = 1; i < HOURS; i++) {
+		for (j = 0; j < ROWS; j++) {
+			for (n = 0; n < COLUMNS; n++) {
+				startPosX = (j-1<MIN_X) ? j : j-1;
+				startPosY = (n-1<MIN_Y) ? n: n-1;
+				endPosX = (j+1>MAX_X) ? j : j+1;
+				endPosY = (n+1>MAX_Y) ? n : n+1;
+				
+				// See how many are alive
+				for(rowNum=startPosX; rowNum<=endPosX; rowNum++){
+					for(colNum=startPosY; colNum<=endPosY; colNum++){
+						// All the neighbors will be grid[rowNum][colNum]
+						sum += katastasi[i].data[rowNum][colNum];
+						count++;
+					}
+				}
+				
+				katastasi[i].data[j][n]	= sum / count;
+				sum = 0;
+				count = 0;	
+				
 				/* ftiaxnei filenames */
 				if (i >=10) {
 					sprintf(buf, "%s%d", name, i);
