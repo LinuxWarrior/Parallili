@@ -71,15 +71,8 @@ void print_debug() {
 }
 
 int main(int argc, char *argv[]) {
-	int i, j, n;
+	int i, j, n, startPosX, startPosY, endPosX, endPosY, rowNum, colNum;
 	FILE *file; 
-	
-	int startPosX;
-	int startPosY;
-	int endPosX;
-	int endPosY;
-	int rowNum;
-	int colNum;
 	
 	int sum = 0;
 	int count = 0;
