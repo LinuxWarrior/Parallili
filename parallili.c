@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
-#include <string.h>
 
 #define HOURS 24
 #define ROWS 8
@@ -76,9 +75,9 @@ int main(int argc, char *argv[]) {
 	FILE *file; 
 	
 	int startPosX;
-    int startPosY;
-    int endPosX;
-    int endPosY;
+	int startPosY;
+	int endPosX;
+	int endPosY;
 	int rowNum;
 	int colNum;
 	
@@ -105,15 +104,13 @@ int main(int argc, char *argv[]) {
 	for (i = 1; i < HOURS; i++) {
 		for (j = 0; j < ROWS; j++) {
 			for (n = 0; n < COLUMNS; n++) {
-				startPosX = (j-1<MIN_X) ? j : j-1;
-				startPosY = (n-1<MIN_Y) ? n: n-1;
-				endPosX = (j+1>MAX_X) ? j : j+1;
-				endPosY = (n+1>MAX_Y) ? n : n+1;
+				startPosX = (j-1 < MIN_X) ? j : j-1;
+				startPosY = (n-1 < MIN_Y) ? n: n-1;
+				endPosX = (j+1 > MAX_X) ? j : j+1;
+				endPosY = (n+1 > MAX_Y) ? n : n+1;
 				
-				// See how many are alive
 				for(rowNum=startPosX; rowNum<=endPosX; rowNum++){
 					for(colNum=startPosY; colNum<=endPosY; colNum++){
-						// All the neighbors will be grid[rowNum][colNum]
 						sum += katastasi[i].data[rowNum][colNum];
 						count++;
 					}
