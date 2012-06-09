@@ -83,6 +83,7 @@ int main(int argc, char *argv[]) {
 	
 	int sum = 0;
 	int count = 0;
+	int opt = 0;
 	
 	const char *name = "map.0";
 	char buf[24] = { 0 };
@@ -94,16 +95,7 @@ int main(int argc, char *argv[]) {
 		for (j = 0; j < ROWS; j++) {
 			for (n = 0; n < COLUMNS; n++) {
 				katastasi[i].data[j][n] =  abs((int) (katastasi[i-1].data[j][n] + sin(7*i) * 3) % 6);
-				therm[i].data[j][n] =  (22 + (sin(6.5 * i ) * 10) - (katastasi[i-1].data[j][n] / 4)) + (therm[i-1].data[j][n]/50);
-				entasi[i].data[j][n] =  (entasi[i-1].data[j][n]/4) + (sin(7 * i) * 3);
-	
-			}
-		}
-	}
-	
-	for (i = 1; i < HOURS; i++) {
-		for (j = 0; j < ROWS; j++) {
-			for (n = 0; n < COLUMNS; n++) {
+				
 				startPosX = (j-1 < MIN_X) ? j : j-1;
 				startPosY = (n-1 < MIN_Y) ? n: n-1;
 				endPosX = (j+1 > MAX_X) ? j : j+1;
@@ -111,14 +103,27 @@ int main(int argc, char *argv[]) {
 				
 				for(rowNum = startPosX; rowNum <= endPosX; rowNum++){
 					for(colNum = startPosY; colNum <= endPosY; colNum++){
-						sum += katastasi[i].data[rowNum][colNum];
-						count++;
+						if (abs((katastasi[i].data[j][n] - katastasi[i-1].data[rowNum][colNum])) > 1) {
+							opt = 1;
+							//sum += katastasi[i-1].data[rowNum][colNum];
+							//count++;
+						}
 					}
 				}
-				
-				katastasi[i].data[j][n]	= sum / count;
-				sum = 0;
-				count = 0;	
+				if (opt == 1) {
+					for(rowNum = startPosX; rowNum <= endPosX; rowNum++){
+						for(colNum = startPosY; colNum <= endPosY; colNum++){
+							sum += katastasi[i-1].data[rowNum][colNum];
+							count++;
+						}
+					}
+					katastasi[i].data[j][n]	= sum / count;
+					sum = 0;
+					count = 0;	
+				}
+				opt = 0;
+				therm[i].data[j][n] =  (22 + (sin(6.5 * i ) * 10) - (katastasi[i-1].data[j][n] / 4)) + (therm[i-1].data[j][n]/50);
+				entasi[i].data[j][n] =  (entasi[i-1].data[j][n]/4) + (sin(7 * i) * 3);
 				
 				/* ftiaxnei filenames */
 				if (i >=10) {
@@ -135,7 +140,11 @@ int main(int argc, char *argv[]) {
 				fprintf(file,"%d",katastasi[i].data[j][n]);
 				fclose(file);
 			}
+				
 		}
+	}
+	
+	
 	}
 	//print_debug();
 	return 0;
