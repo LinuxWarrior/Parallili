@@ -109,8 +109,8 @@ int main(int argc, char *argv[]) {
 				endPosX = (j+1 > MAX_X) ? j : j+1;
 				endPosY = (n+1 > MAX_Y) ? n : n+1;
 				
-				for(rowNum=startPosX; rowNum<=endPosX; rowNum++){
-					for(colNum=startPosY; colNum<=endPosY; colNum++){
+				for(rowNum = startPosX; rowNum <= endPosX; rowNum++){
+					for(colNum = startPosY; colNum <= endPosY; colNum++){
 						sum += katastasi[i].data[rowNum][colNum];
 						count++;
 					}
