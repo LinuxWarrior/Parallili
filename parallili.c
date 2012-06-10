@@ -3,13 +3,13 @@
 #include <time.h>
 #include <math.h>
 
-#define HOURS 24  //problepseis
+#define HOURS 4  //problepseis
 #define ROWS 8
 #define COLUMNS 8
 #define MAX_X 7
 #define MAX_Y 7
-#define MIN_X 7
-#define MIN_Y 7
+#define MIN_X 0
+#define MIN_Y 0
 
 /* dhmiourgia structs isa me tis problepseis mas (HOURS) */
 /* pinakas data me ta stoixeia ths katastasis, thermokrasias, entasis */
@@ -147,7 +147,6 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	
-	//print_debug();
+	print_debug();
 	return 0;
 }
-

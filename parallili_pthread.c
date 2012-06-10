@@ -2,14 +2,15 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include <pthread.h>
 
-#define HOURS 24
+#define HOURS 4
 #define ROWS 8
 #define COLUMNS 8
 #define MAX_X 7
 #define MAX_Y 7
-#define MIN_X 7
-#define MIN_Y 7
+#define MIN_X 0
+#define MIN_Y 0
 
 int curr;
 int global_num_of_threads;
@@ -88,23 +89,10 @@ void *decompose_on_x(void *id) {
 	int from_range;
 	int to_range;
 	
-	if ((thread_id == 0) || (thread_id == global_num_of_threads - 1)) {
-		int data[ROWS / global_num_of_threads + 1][COLUMNS / global_num_of_threads];
-		/* mutex lock */
-		from_range = thread_id * (ROWS / 4);
-		to_range = from_range + (ROWS / 4);
-		//endexomena
-		//se allon pinaka? h ston idio?
-		//paradeigma mandelbrot
-		//copy olo ton pinaka se local var k mutex meta sthn apothikeusi
-		
-	} else {
-		int data[ROWS / global_num_of_threads + 1][COLUMNS / global_num_of_threads];
-		from_range = thread_id * (ROWS / 4) - 1;
-		to_range = from_range + (ROWS / 4) + 1;
-	}
+	from_range = thread_id * (ROWS / 4);
+	to_range = from_range + (ROWS / 4);
 	
-	for (j = 0; j < ROWS; j++) {
+	for (j = from_range; j < to_range; j++) {
 		for (n = 0; n < COLUMNS; n++) {
 			katastasi[curr].data[j][n] =  abs((int) (katastasi[curr-1].data[j][n] + sin(7 * curr) * 3) % 6);
 			
@@ -133,6 +121,7 @@ void *decompose_on_x(void *id) {
 				sum = 0;
 				count = 0;	
 			}
+			
 			opt = 0;
 			therm[curr].data[j][n] =  (22 + (sin(6.5 * curr ) * 10) - (katastasi[curr-1].data[j][n] / 4)) + (therm[curr-1].data[j][n]/50);
 			entasi[curr].data[j][n] =  (entasi[curr-1].data[j][n]/4) + (sin(7 * curr) * 3);
@@ -168,15 +157,16 @@ int main(int argc, char *argv[]) {
 	void *retval;              /* unused; required for join() */
 	
 	//pthread_mutex_init(&piLock, NULL);
-	for (cnt_problepseis = 1; cnt_problepseis < HOURS; cnt_problepseis++) {
+	for (cnt_problepseis = 1; cnt_problepseis < HOURS + 1; cnt_problepseis++) {
 		curr = cnt_problepseis;
 		global_num_of_threads = num_of_threads;
+		
 		for (i = 0; i < num_of_threads; i++) {
 			pthread_create(&threads[i], NULL, &decompose_on_x, &i);
 			pthread_join(threads[i], &retval);
 		}
 	}
-	//print_debug();
+	print_debug();
 	return 0;
 }
 
