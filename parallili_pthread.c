@@ -13,7 +13,6 @@
 #define MIN_Y 0
 
 int curr;
-int global_num_of_threads;
 
 struct K
 {
@@ -159,14 +158,13 @@ int main(int argc, char *argv[]) {
 	//pthread_mutex_init(&piLock, NULL);
 	for (cnt_problepseis = 1; cnt_problepseis < HOURS + 1; cnt_problepseis++) {
 		curr = cnt_problepseis;
-		global_num_of_threads = num_of_threads;
 		
 		for (i = 0; i < num_of_threads; i++) {
 			pthread_create(&threads[i], NULL, &decompose_on_x, &i);
 			pthread_join(threads[i], &retval);
 		}
 	}
-	print_debug();
+	//print_debug();
 	return 0;
 }
 

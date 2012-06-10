@@ -147,6 +147,6 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	
-	print_debug();
+	//print_debug();
 	return 0;
 }
