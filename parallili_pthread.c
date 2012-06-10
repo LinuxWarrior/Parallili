@@ -85,11 +85,8 @@ void *decompose_on_x(void *id) {
 	
 	int thread_id = *((int*)id);
 	
-	int from_range;
-	int to_range;
-	
-	from_range = thread_id * (ROWS / 4);
-	to_range = from_range + (ROWS / 4);
+	int from_range = thread_id * (ROWS / 4);
+	int to_range = from_range + (ROWS / 4);
 	
 	for (j = from_range; j < to_range; j++) {
 		for (n = 0; n < COLUMNS; n++) {
