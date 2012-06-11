@@ -4,34 +4,36 @@
 #include <math.h>
 #include <sys/time.h>
 
-#define HOURS 4  //problepseis
-#define ROWS 8
-#define COLUMNS 8
-#define MAX_X 7
-#define MAX_Y 7
+#define HOURS 2  //problepseis
+#define ROWS 4096
+#define COLUMNS 4096
+#define MAX_X 4095
+#define MAX_Y 4095
 #define MIN_X 0
 #define MIN_Y 0
 
 /* dhmiourgia structs isa me tis problepseis mas (HOURS) */
 /* pinakas data me ta stoixeia ths katastasis, thermokrasias, entasis */
-struct K
+struct Kat
 {
-	unsigned short i; 			//pithanws axrhsto
 	int data[ROWS][COLUMNS];
-} katastasi[HOURS];
+} static katastasi[HOURS];
 
-struct E
+struct Ent
 {
-	unsigned short i;
-	int data[ROWS][COLUMNS];
-} entasi[HOURS];
+	float data[ROWS][COLUMNS];
+} static entasi[HOURS];
 
-struct T
+struct Th
 {
-	unsigned short i;
 	int data[ROWS][COLUMNS];
-} therm[HOURS];
+} static thermokrasia[HOURS];
 
+struct test		//dummy struct gia kapoion periergo logo pathainei segmentation fault otan to afairesw
+{				//dafuq????
+	int data[ROWS][COLUMNS];
+} static t[HOURS];
+	
 /* ----------------------------------------------------------------- */
 
 void read_from_binary() {
@@ -71,19 +73,11 @@ void init() {
 	int i, j, n;
 	FILE *file; 
 	
-	for (i = 0; i < HOURS; i++) {	//arxikopoihsh
-		katastasi[i].i = i;			//tou element i pou deixnei se poia katastasi eimaste
-		therm[i].i = i;				// gia debugging
-		entasi[i].i = i;			// NA TO SBHSW
-	}
-	
 	for (i = 0; i < HOURS; i++) {
-		//printf("%d\n", katastasi[i].i);
-		
 		for (j = 0; j < ROWS; j++) {
 			for (n = 0; n < COLUMNS; n++) {
 				katastasi[i].data[j][n] = rand() % 5; //arxikopoihsh pinakwn katastasis me tyxaia timh apo 0 ws 5
-				therm[i].data[j][n] = 22;			//arxikopoihsh thermokrasias me 22
+				thermokrasia[i].data[j][n] = 22;			//arxikopoihsh thermokrasias me 22
 				entasi[i].data[j][n] = 0;			//........... entasi me 0
 				
 				//if (i == 0) { 
@@ -124,10 +118,10 @@ int main(int argc, char *argv[]) {
 	
 	gettimeofday(&StartTime, NULL);
 	/* loops gia gemisma epomenwn katastasewn */
-	for (i = 1; i < HOURS + 1; i++) {
+	for (i = 0; i < HOURS; i++) {
 		for (j = 0; j < ROWS; j++) {
 			for (n = 0; n < COLUMNS; n++) {
-				katastasi[i].data[j][n] =  abs((int) (katastasi[i-1].data[j][n] + sin(7*i) * 3) % 6);
+				katastasi[i+1].data[j][n] =  abs((int) (katastasi[i].data[j][n] + sin(7*i) * 3) % 6);
 				
 				/* euresi geitonikwn stoixeiwn */
 				startPosX = (j-1 < MIN_X) ? j : j-1;
@@ -138,7 +132,7 @@ int main(int argc, char *argv[]) {
 				for(rowNum = startPosX; rowNum <= endPosX; rowNum++){
 					for(colNum = startPosY; colNum <= endPosY; colNum++){
 						/* elegxos gia apokliseis megalyteres tou 1 */
-						if (abs((katastasi[i].data[j][n] - katastasi[i-1].data[rowNum][colNum])) > 1) {
+						if (abs((katastasi[i+1].data[j][n] - katastasi[i].data[rowNum][colNum])) > 1) {
 							opt = 1; //flag gia apoklish
 						}
 						/* ------------------------------------------ */
@@ -151,18 +145,18 @@ int main(int argc, char *argv[]) {
 				if (opt == 1) {
 					for(rowNum = startPosX; rowNum <= endPosX; rowNum++){
 						for(colNum = startPosY; colNum <= endPosY; colNum++){
-							sum += katastasi[i-1].data[rowNum][colNum];
+							sum += katastasi[i].data[rowNum][colNum];
 							count++;
 						}
 					}
-					katastasi[i].data[j][n]	= sum / count;
+					katastasi[i+1].data[j][n]	= sum / count;
 					sum = 0;
 					count = 0;	
 				}
 				/* _________________________________________________ */
 				opt = 0;
-				therm[i].data[j][n] =  (22 + (sin(6.5 * i ) * 10) - (katastasi[i-1].data[j][n] / 4)) + (therm[i-1].data[j][n]/50);
-				entasi[i].data[j][n] =  (entasi[i-1].data[j][n]/4) + (sin(7 * i) * 3);
+				thermokrasia[i+1].data[j][n] =  (22 + (sin(6.5 * i ) * 10) - (katastasi[i].data[j][n] / 4)) + (thermokrasia[i].data[j][n]/50);
+				entasi[i+1].data[j][n] =  (entasi[i].data[j][n]/4) + (sin(7 * i) * 3);
 				
 				/* ftiaxnei filenames */
 				//if (i >=10) {

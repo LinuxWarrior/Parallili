@@ -5,11 +5,11 @@
 #include <pthread.h>
 #include <sys/time.h>
 
-#define HOURS 4
-#define ROWS 8
-#define COLUMNS 8
-#define MAX_X 7
-#define MAX_Y 7
+#define HOURS 2
+#define ROWS 4096
+#define COLUMNS 4096
+#define MAX_X 4095
+#define MAX_Y 4095
 #define MIN_X 0
 #define MIN_Y 0
 
@@ -18,22 +18,24 @@ int num_of_threads;
 
 struct K
 {
-	unsigned short i;
 	int data[ROWS][COLUMNS];
-} katastasi[HOURS];
+} static katastasi[HOURS];
 
 struct E
 {
-	unsigned short i;
 	int data[ROWS][COLUMNS];
-} entasi[HOURS];
+} static entasi[HOURS];
 
 struct T
 {
-	unsigned short i;
 	int data[ROWS][COLUMNS];
-} therm[HOURS];
+} static therm[HOURS];
 
+struct test
+{
+	int data[ROWS][COLUMNS];
+} static t[HOURS];
+	
 void read_from_binary() {
 	FILE *fp;
 	
@@ -70,12 +72,6 @@ void read_from_binary() {
 void init() {
 	int i, j, n;
 	FILE *file; 
-	
-	for (i = 0; i < HOURS; i++) {
-		katastasi[i].i = i;
-		therm[i].i = i;
-		entasi[i].i = i;
-	}
 	
 	for (i = 0; i < HOURS; i++) {
 		//printf("%d\n", katastasi[i].i);
@@ -125,7 +121,7 @@ void *decompose_on_x(void *id) {
 	
 	for (j = from_range; j < to_range; j++) {
 		for (n = 0; n < COLUMNS; n++) {
-			katastasi[curr].data[j][n] =  abs((int) (katastasi[curr-1].data[j][n] + sin(7 * curr) * 3) % 6);
+			katastasi[curr+1].data[j][n] =  abs((int) (katastasi[curr].data[j][n] + sin(7 * curr) * 3) % 6);
 			
 			startPosX = (j-1 < MIN_X) ? j : j-1;
 			startPosY = (n-1 < MIN_Y) ? n: n-1;
@@ -134,7 +130,7 @@ void *decompose_on_x(void *id) {
 			
 			for(rowNum = startPosX; rowNum <= endPosX; rowNum++){
 				for(colNum = startPosY; colNum <= endPosY; colNum++){
-					if (abs((katastasi[curr].data[j][n] - katastasi[curr-1].data[rowNum][colNum])) > 1) {
+					if (abs((katastasi[curr+1].data[j][n] - katastasi[curr].data[rowNum][colNum])) > 1) {
 						opt = 1;
 					}
 				}
@@ -142,18 +138,18 @@ void *decompose_on_x(void *id) {
 			if (opt == 1) {
 				for(rowNum = startPosX; rowNum <= endPosX; rowNum++){
 					for(colNum = startPosY; colNum <= endPosY; colNum++){
-						sum += katastasi[curr-1].data[rowNum][colNum];
+						sum += katastasi[curr].data[rowNum][colNum];
 						count++;
 					}
 				}
-				katastasi[curr].data[j][n]	= sum / count;
+				katastasi[curr+1].data[j][n]	= sum / count;
 				sum = 0;
 				count = 0;	
 			}
 			
 			opt = 0;
-			therm[curr].data[j][n] =  (22 + (sin(6.5 * curr ) * 10) - (katastasi[curr-1].data[j][n] / 4)) + (therm[curr-1].data[j][n]/50);
-			entasi[curr].data[j][n] =  (entasi[curr-1].data[j][n]/4) + (sin(7 * curr) * 3);
+			therm[curr+1].data[j][n] =  (22 + (sin(6.5 * curr ) * 10) - (katastasi[curr].data[j][n] / 4)) + (therm[curr].data[j][n]/50);
+			entasi[curr+1].data[j][n] =  (entasi[curr].data[j][n]/4) + (sin(7 * curr) * 3);
 			/* mutex */
 			/* ftiaxnei filenames */
 			//if (curr >=10) {
@@ -189,7 +185,7 @@ int main(int argc, char *argv[]) {
 	
 	gettimeofday(&StartTime, NULL);
 	//pthread_mutex_init(&piLock, NULL);
-	for (cnt_problepseis = 1; cnt_problepseis < HOURS + 1; cnt_problepseis++) {
+	for (cnt_problepseis = 0; cnt_problepseis < HOURS; cnt_problepseis++) {
 		curr = cnt_problepseis;
 		
 		for (i = 0; i < num_of_threads; i++) {
