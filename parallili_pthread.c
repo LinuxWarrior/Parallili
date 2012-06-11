@@ -13,6 +13,7 @@
 #define MIN_Y 0
 
 int curr;
+int num_of_threads;
 
 struct K
 {
@@ -32,6 +33,39 @@ struct T
 	int data[ROWS][COLUMNS];
 } therm[HOURS];
 
+void read_from_binary() {
+	FILE *fp;
+	
+	int i, j;
+	
+	//if((fp=fopen("test", "wb"))==NULL) {
+		//printf("Cannot open file.\n");
+	//}
+
+	//if(fwrite(katastasi[0].data, sizeof(int), ROWS*COLUMNS, fp) != ROWS*COLUMNS)
+		//printf("File write error.");
+	//fclose(fp);
+
+	/* read the values */
+	if((fp=fopen("test", "rb"))==NULL) {
+		printf("Cannot open file.\n");
+	}
+
+	if(fread(katastasi[0].data, sizeof(int), ROWS*COLUMNS, fp) != ROWS*COLUMNS) {
+		if(feof(fp))
+			printf("Premature end of file.");
+		else
+			printf("File read error.");
+	}
+	fclose(fp);
+	/* sanity check */
+	/*for(j = 0; j < ROWS; j++) {
+		for(i = 0; i < COLUMNS; i++)
+			printf("%d ", katastasi[0].data[j][i]);
+		printf("\n");
+	}*/
+}
+
 void init() {
 	int i, j, n;
 	FILE *file; 
@@ -47,7 +81,7 @@ void init() {
 		
 		for (j = 0; j < ROWS; j++) {
 			for (n = 0; n < COLUMNS; n++) {
-				katastasi[i].data[j][n] = rand() % 5;
+				katastasi[i].data[j][n] = rand() % 5; //arxikopoihsh pinakwn katastasis me tyxaia timh apo 0 ws 5
 				therm[i].data[j][n] = 22;
 				entasi[i].data[j][n] = 0;
 				
@@ -85,8 +119,8 @@ void *decompose_on_x(void *id) {
 	
 	int thread_id = *((int*)id);
 	
-	int from_range = thread_id * (ROWS / 4);
-	int to_range = from_range + (ROWS / 4);
+	int from_range = thread_id * (ROWS / num_of_threads);
+	int to_range = from_range + (ROWS / num_of_threads);
 	
 	for (j = from_range; j < to_range; j++) {
 		for (n = 0; n < COLUMNS; n++) {
@@ -101,8 +135,6 @@ void *decompose_on_x(void *id) {
 				for(colNum = startPosY; colNum <= endPosY; colNum++){
 					if (abs((katastasi[curr].data[j][n] - katastasi[curr-1].data[rowNum][colNum])) > 1) {
 						opt = 1;
-						//sum += katastasi[curr-1].data[rowNum][colNum];
-						//count++;
 					}
 				}
 			}
@@ -121,7 +153,7 @@ void *decompose_on_x(void *id) {
 			opt = 0;
 			therm[curr].data[j][n] =  (22 + (sin(6.5 * curr ) * 10) - (katastasi[curr-1].data[j][n] / 4)) + (therm[curr-1].data[j][n]/50);
 			entasi[curr].data[j][n] =  (entasi[curr-1].data[j][n]/4) + (sin(7 * curr) * 3);
-			
+			/* mutex */
 			/* ftiaxnei filenames */
 			if (curr >=10) {
 				sprintf(buf, "%s%d", name, curr);
@@ -147,8 +179,9 @@ int main(int argc, char *argv[]) {
 	
 	srand(time(NULL));
 	init();
+	read_from_binary();
 	
-	int num_of_threads = atoi(argv[1]);
+	num_of_threads = atoi(argv[1]);
 	pthread_t threads[num_of_threads];
 	void *retval;              /* unused; required for join() */
 	

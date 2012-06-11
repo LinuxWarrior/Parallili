@@ -33,6 +33,39 @@ struct T
 
 /* ----------------------------------------------------------------- */
 
+void read_from_binary() {
+	FILE *fp;
+	
+	int i, j;
+	
+	//if((fp=fopen("test", "wb"))==NULL) {
+		//printf("Cannot open file.\n");
+	//}
+
+	//if(fwrite(katastasi[0].data, sizeof(int), ROWS*COLUMNS, fp) != ROWS*COLUMNS)
+		//printf("File write error.");
+	//fclose(fp);
+
+	/* read the values */
+	if((fp=fopen("test", "rb"))==NULL) {
+		printf("Cannot open file.\n");
+	}
+
+	if(fread(katastasi[0].data, sizeof(int), ROWS*COLUMNS, fp) != ROWS*COLUMNS) {
+		if(feof(fp))
+			printf("Premature end of file.");
+		else
+			printf("File read error.");
+	}
+	fclose(fp);
+	/* sanity check */
+	/*for(j = 0; j < ROWS; j++) {
+		for(i = 0; i < COLUMNS; i++)
+			printf("%d ", katastasi[0].data[j][i]);
+		printf("\n");
+	}*/
+}
+
 void init() {
 	int i, j, n;
 	FILE *file; 
@@ -60,7 +93,6 @@ void init() {
 			}
 		}	
 	}
-	
 }
 
 void print_debug() {
@@ -86,6 +118,7 @@ int main(int argc, char *argv[]) {
 	
 	srand(time(NULL));
 	init(); //arxikopoihsh
+	read_from_binary();
 	
 	/* loops gia gemisma epomenwn katastasewn */
 	for (i = 1; i < HOURS; i++) {
