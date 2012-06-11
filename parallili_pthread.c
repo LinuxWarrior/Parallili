@@ -38,7 +38,7 @@ void read_from_binary() {
 	
 	int i, j;
 	
-	//if((fp=fopen("test", "wb"))==NULL) {
+	//if((fp=fopen("map.000", "wb"))==NULL) {
 		//printf("Cannot open file.\n");
 	//}
 
@@ -47,7 +47,7 @@ void read_from_binary() {
 	//fclose(fp);
 
 	/* read the values */
-	if((fp=fopen("test", "rb"))==NULL) {
+	if((fp=fopen("map.000", "rb"))==NULL) {
 		printf("Cannot open file.\n");
 	}
 
@@ -59,11 +59,11 @@ void read_from_binary() {
 	}
 	fclose(fp);
 	/* sanity check */
-	/*for(j = 0; j < ROWS; j++) {
-		for(i = 0; i < COLUMNS; i++)
-			printf("%d ", katastasi[0].data[j][i]);
-		printf("\n");
-	}*/
+	//for(j = 0; j < ROWS; j++) {
+		//for(i = 0; i < COLUMNS; i++)
+			//printf("%d ", katastasi[0].data[j][i]);
+		//printf("\n");
+	//}
 }
 
 void init() {
@@ -85,11 +85,11 @@ void init() {
 				therm[i].data[j][n] = 22;
 				entasi[i].data[j][n] = 0;
 				
-				if (i == 0) {
-					file = fopen("map.000","a+"); 
-					fprintf(file,"%d", katastasi[i].data[j][n]);
-					fclose(file);
-				} 
+				//if (i == 0) {
+					//file = fopen("map.000","a+"); 
+					//fprintf(file,"%d", katastasi[i].data[j][n]);
+					//fclose(file);
+				//} 
 			}
 		}	
 	}

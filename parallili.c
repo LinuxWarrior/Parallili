@@ -38,7 +38,7 @@ void read_from_binary() {
 	
 	int i, j;
 	
-	//if((fp=fopen("test", "wb"))==NULL) {
+	//if((fp=fopen("map.000", "wb"))==NULL) {
 		//printf("Cannot open file.\n");
 	//}
 
@@ -47,7 +47,7 @@ void read_from_binary() {
 	//fclose(fp);
 
 	/* read the values */
-	if((fp=fopen("test", "rb"))==NULL) {
+	if((fp=fopen("map.000", "rb"))==NULL) {
 		printf("Cannot open file.\n");
 	}
 
@@ -85,11 +85,11 @@ void init() {
 				therm[i].data[j][n] = 22;			//arxikopoihsh thermokrasias me 22
 				entasi[i].data[j][n] = 0;			//........... entasi me 0
 				
-				if (i == 0) { 
-					file = fopen("map.000","a+"); 
-					fprintf(file,"%d", katastasi[i].data[j][n]); //apothikeusi arxikou pinaka katastasis
-					fclose(file);								// se arxeio map.000
-				} 
+				//if (i == 0) { 
+					//file = fopen("map.000","a+"); 
+					//fprintf(file,"%d", katastasi[i].data[j][n]); //apothikeusi arxikou pinaka katastasis
+					//fclose(file);								// se arxeio map.000
+				//} 
 			}
 		}	
 	}
@@ -121,7 +121,7 @@ int main(int argc, char *argv[]) {
 	read_from_binary();
 	
 	/* loops gia gemisma epomenwn katastasewn */
-	for (i = 1; i < HOURS; i++) {
+	for (i = 1; i < HOURS + 1; i++) {
 		for (j = 0; j < ROWS; j++) {
 			for (n = 0; n < COLUMNS; n++) {
 				katastasi[i].data[j][n] =  abs((int) (katastasi[i-1].data[j][n] + sin(7*i) * 3) % 6);
