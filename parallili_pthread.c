@@ -3,6 +3,7 @@
 #include <time.h>
 #include <math.h>
 #include <pthread.h>
+#include <sys/time.h>
 
 #define HOURS 4
 #define ROWS 8
@@ -155,19 +156,19 @@ void *decompose_on_x(void *id) {
 			entasi[curr].data[j][n] =  (entasi[curr-1].data[j][n]/4) + (sin(7 * curr) * 3);
 			/* mutex */
 			/* ftiaxnei filenames */
-			if (curr >=10) {
-				sprintf(buf, "%s%d", name, curr);
-				//printf("%s\n", buf);
+			//if (curr >=10) {
+				//sprintf(buf, "%s%d", name, curr);
+				////printf("%s\n", buf);
 
-			} else {
-				sprintf(buf, "%s0%d", name, curr);
-				//printf("%s\n", buf);
-			}
+			//} else {
+				//sprintf(buf, "%s0%d", name, curr);
+				////printf("%s\n", buf);
+			//}
 			
-			/* apothikeusi */				
-			file = fopen(buf,"a+"); 
-			fprintf(file,"%d",katastasi[curr].data[j][n]);
-			fclose(file);
+			///* apothikeusi */				
+			//file = fopen(buf,"a+"); 
+			//fprintf(file,"%d",katastasi[curr].data[j][n]);
+			//fclose(file);
 		}
 			
 	}
@@ -176,6 +177,7 @@ void *decompose_on_x(void *id) {
 
 int main(int argc, char *argv[]) {
 	int i, cnt_problepseis;
+	struct timeval	StartTime, EndTime;
 	
 	srand(time(NULL));
 	init();
@@ -185,6 +187,7 @@ int main(int argc, char *argv[]) {
 	pthread_t threads[num_of_threads];
 	void *retval;              /* unused; required for join() */
 	
+	gettimeofday(&StartTime, NULL);
 	//pthread_mutex_init(&piLock, NULL);
 	for (cnt_problepseis = 1; cnt_problepseis < HOURS + 1; cnt_problepseis++) {
 		curr = cnt_problepseis;
@@ -194,6 +197,21 @@ int main(int argc, char *argv[]) {
 			pthread_join(threads[i], &retval);
 		}
 	}
+	
+	gettimeofday(&EndTime, NULL);
+
+	if (EndTime.tv_usec < StartTime.tv_usec) {
+		int nsec = (StartTime.tv_usec - EndTime.tv_usec) / 1000000 + 1;
+		StartTime.tv_usec -= 1000000 * nsec;
+		StartTime.tv_sec += nsec;
+	}
+	if (EndTime.tv_usec - StartTime.tv_usec > 1000000) {
+		int nsec = (EndTime.tv_usec - StartTime.tv_usec) / 1000000;
+		StartTime.tv_usec += 1000000 * nsec;
+		StartTime.tv_sec -= nsec;
+	}
+
+	printf("\n\nCalculation time: %ld.%.6ld seconds\n", EndTime.tv_sec  - StartTime.tv_sec, EndTime.tv_usec - StartTime.tv_usec);
 	//print_debug();
 	return 0;
 }

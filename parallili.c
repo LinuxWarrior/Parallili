@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include <sys/time.h>
 
 #define HOURS 4  //problepseis
 #define ROWS 8
@@ -108,6 +109,7 @@ void print_debug() {
 int main(int argc, char *argv[]) {
 	int i, j, n, startPosX, startPosY, endPosX, endPosY, rowNum, colNum;
 	FILE *file; 
+	struct timeval	StartTime, EndTime;
 	
 	int sum = 0;
 	int count = 0;
@@ -120,6 +122,7 @@ int main(int argc, char *argv[]) {
 	init(); //arxikopoihsh
 	read_from_binary();
 	
+	gettimeofday(&StartTime, NULL);
 	/* loops gia gemisma epomenwn katastasewn */
 	for (i = 1; i < HOURS + 1; i++) {
 		for (j = 0; j < ROWS; j++) {
@@ -162,24 +165,38 @@ int main(int argc, char *argv[]) {
 				entasi[i].data[j][n] =  (entasi[i-1].data[j][n]/4) + (sin(7 * i) * 3);
 				
 				/* ftiaxnei filenames */
-				if (i >=10) {
-					sprintf(buf, "%s%d", name, i);
-					//printf("%s\n", buf);
+				//if (i >=10) {
+					//sprintf(buf, "%s%d", name, i);
+					////printf("%s\n", buf);
 
-				} else {
-					sprintf(buf, "%s0%d", name, i);
-					//printf("%s\n", buf);
-				}
+				//} else {
+					//sprintf(buf, "%s0%d", name, i);
+					////printf("%s\n", buf);
+				//}
 				
-				/* apothikeusi */				
-				file = fopen(buf,"a+"); 
-				fprintf(file,"%d",katastasi[i].data[j][n]);
-				fclose(file);
+				///* apothikeusi */				
+				//file = fopen(buf,"a+"); 
+				//fprintf(file,"%d",katastasi[i].data[j][n]);
+				//fclose(file);
 			}
 				
 		}
 	}
 	
+	gettimeofday(&EndTime, NULL);
+
+	if (EndTime.tv_usec < StartTime.tv_usec) {
+		int nsec = (StartTime.tv_usec - EndTime.tv_usec) / 1000000 + 1;
+		StartTime.tv_usec -= 1000000 * nsec;
+		StartTime.tv_sec += nsec;
+	}
+	if (EndTime.tv_usec - StartTime.tv_usec > 1000000) {
+		int nsec = (EndTime.tv_usec - StartTime.tv_usec) / 1000000;
+		StartTime.tv_usec += 1000000 * nsec;
+		StartTime.tv_sec -= nsec;
+	}
+
+	printf("\n\nCalculation time: %ld.%.6ld seconds\n", EndTime.tv_sec  - StartTime.tv_sec, EndTime.tv_usec - StartTime.tv_usec);
 	//print_debug();
 	return 0;
 }
