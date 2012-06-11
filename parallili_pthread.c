@@ -16,17 +16,17 @@
 int curr;
 int num_of_threads;
 
-struct K
+struct Kat
 {
 	int data[ROWS][COLUMNS];
 } static katastasi[HOURS];
 
-struct E
+struct Ent
 {
-	int data[ROWS][COLUMNS];
+	float data[ROWS][COLUMNS];
 } static entasi[HOURS];
 
-struct T
+struct Th
 {
 	int data[ROWS][COLUMNS];
 } static therm[HOURS];
